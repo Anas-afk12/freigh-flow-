@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FreightFlow PRO — Master Data</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="topbar">
+    <span class="brand">FreightFlow&nbsp;PRO</span>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="new-job.html">New Job</a>
+      <a href="master-data.html" class="active">Master Data</a>
+      <a href="reports-gpsht.html">GPSHT</a>
+      <a href="reports-jobgp.html">JOBGP</a>
+      <a href="settings.html">Settings</a>
+    </nav>
+  </div>
+
+  <div class="container">
+    <div class="page-head"><h1>Master Data</h1></div>
+    <div class="tabs" id="tabs">
+      <button data-tab="clients" class="active">Clients</button>
+      <button data-tab="ports">Ports</button>
+      <button data-tab="commodities">Commodities</button>
+      <button data-tab="container-types">Container Types</button>
+    </div>
+    <div class="card"><div class="card-body">
+      <div class="toolbar">
+        <input type="search" id="search" placeholder="Search…" />
+        <label style="display:flex;align-items:center;gap:6px;margin:0;"><input type="checkbox" id="active-only" style="width:auto;" /> Active only</label>
+        <span class="spacer"></span>
+        <button class="btn btn-primary btn-sm" id="add-btn">+ Add</button>
+      </div>
+      <div id="table"></div>
+    </div></div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/modal.js"></script>
+  <script src="js/table.js"></script>
+  <script src="js/pages/masterData.js"></script>
+</body>
+</html>

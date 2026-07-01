@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FreightFlow PRO — Dashboard</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="topbar">
+    <span class="brand">FreightFlow&nbsp;PRO</span>
+    <nav>
+      <a href="index.html" class="active">Dashboard</a>
+      <a href="new-job.html">New Job</a>
+      <a href="master-data.html">Master Data</a>
+      <a href="reports-gpsht.html">GPSHT</a>
+      <a href="reports-jobgp.html">JOBGP</a>
+      <a href="settings.html">Settings</a>
+    </nav>
+  </div>
+
+  <div class="container">
+    <div class="page-head">
+      <h1>Dashboard</h1>
+      <a href="new-job.html" class="btn btn-primary">+ New Job</a>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <div class="card">
+      <h2>Jobs</h2>
+      <div class="card-body">
+        <div class="toolbar">
+          <input type="search" id="search" placeholder="Search job #, BL #, shipper, consignee…" />
+          <select id="status">
+            <option value="">All statuses</option>
+            <option>BOOKED</option><option>SAILED</option><option>DELIVERED</option>
+            <option>CLOSED</option><option>CANCELLED</option>
+          </select>
+          <label style="display:flex;align-items:center;gap:6px;margin:0;">
+            <input type="checkbox" id="archived" style="width:auto;" /> Include archived
+          </label>
+          <span class="spacer"></span>
+        </div>
+        <div id="jobs-table"></div>
+        <div class="pager" id="pager"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/modal.js"></script>
+  <script src="js/table.js"></script>
+  <script src="js/pages/dashboard.js"></script>
+</body>
+</html>

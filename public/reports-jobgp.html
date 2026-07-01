@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FreightFlow PRO — JOBGP Report</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="topbar">
+    <span class="brand">FreightFlow&nbsp;PRO</span>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="new-job.html">New Job</a>
+      <a href="master-data.html">Master Data</a>
+      <a href="reports-gpsht.html">GPSHT</a>
+      <a href="reports-jobgp.html" class="active">JOBGP</a>
+      <a href="settings.html">Settings</a>
+    </nav>
+  </div>
+
+  <div class="container">
+    <div class="page-head"><h1>JOBGP — Profit / Tax Analysis</h1></div>
+    <div class="card"><div class="card-body">
+      <div class="toolbar">
+        <select id="status"><option value="">All statuses</option><option>BOOKED</option><option>SAILED</option><option>DELIVERED</option><option>CLOSED</option><option>CANCELLED</option></select>
+        <label style="margin:0;">From <input type="date" id="dateFrom" /></label>
+        <label style="margin:0;">to <input type="date" id="dateTo" /></label>
+        <label style="display:flex;align-items:center;gap:6px;margin:0;"><input type="checkbox" id="archived" style="width:auto;" /> Incl. archived</label>
+        <span class="spacer"></span>
+        <button class="btn btn-sm btn-ghost" onclick="window.print()">Print</button>
+        <button class="btn btn-sm btn-accent" id="export">Export Excel</button>
+      </div>
+      <div id="table"></div>
+    </div></div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/modal.js"></script>
+  <script src="js/table.js"></script>
+  <script>window.REPORT = 'jobgp';</script>
+  <script src="js/pages/reports.js"></script>
+</body>
+</html>
