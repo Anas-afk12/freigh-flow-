@@ -63,6 +63,12 @@ Requires **Node.js 18+** (Node 22+ recommended).
 # 1. Install dependencies
 npm install
 # (to run/test only, without the Electron toolchain: npm install --omit=dev)
+#
+# On Node 24+ (no better-sqlite3 prebuilt binary) or a machine without Python /
+# build tools, skip native compilation — the app falls back to Node's built-in
+# SQLite automatically:
+#   npm install --omit=dev --ignore-scripts
+# Windows users can instead just double-click start-freightflow.bat.
 
 # 2. Create the database, schema and seed data (idempotent)
 npm run db:reset
