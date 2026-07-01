@@ -22,6 +22,8 @@ app.use(cors());
 app.use(express.json({ limit: '2mb' }));
 app.use(logger);
 
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 app.use('/api', apiRoutes);
 
 // Static frontend.

@@ -22,10 +22,13 @@ function getById(id) {
 }
 
 function create(jobId, data) {
-  const values = COLS.map((c) => (data[c] === undefined ? null : data[c]));
+  // Only write provided columns so the NOT NULL status default ('EMPTY') applies.
+  const provided = COLS.filter((c) => data[c] !== undefined && data[c] !== null && data[c] !== '');
+  const cols = ['job_id', ...provided];
+  const values = [jobId, ...provided.map((c) => data[c])];
   const info = db
-    .prepare(`INSERT INTO containers (job_id, ${COLS.join(', ')}) VALUES (?, ${COLS.map(() => '?').join(', ')})`)
-    .run(jobId, ...values);
+    .prepare(`INSERT INTO containers (${cols.join(', ')}) VALUES (${cols.map(() => '?').join(', ')})`)
+    .run(...values);
   return getById(info.lastInsertRowid);
 }
 
