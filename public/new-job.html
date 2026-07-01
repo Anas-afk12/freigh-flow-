@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FreightFlow PRO — New Job</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="topbar">
+    <span class="brand">FreightFlow&nbsp;PRO</span>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="new-job.html" class="active">New Job</a>
+      <a href="master-data.html">Master Data</a>
+      <a href="reports-gpsht.html">GPSHT</a>
+      <a href="reports-jobgp.html">JOBGP</a>
+      <a href="settings.html">Settings</a>
+    </nav>
+  </div>
+
+  <div class="container">
+    <div class="page-head"><h1 id="title">New Job</h1><a href="index.html" class="btn btn-ghost">← Back</a></div>
+
+    <form id="job-form">
+      <div class="card">
+        <h2>Shipment</h2>
+        <div class="card-body">
+          <div class="grid grid-4">
+            <div class="field"><label>Job Type</label><select name="job_type"><option>FCL</option><option>LCL</option></select></div>
+            <div class="field"><label>Direction</label><select name="direction"><option>EXPORT</option><option>IMPORT</option></select></div>
+            <div class="field"><label>Created Date</label><input type="date" name="created_date" /></div>
+            <div class="field"><label>Status</label><select name="status"><option>BOOKED</option><option>SAILED</option><option>DELIVERED</option><option>CLOSED</option><option>CANCELLED</option></select></div>
+          </div>
+          <div class="grid grid-3">
+            <div class="field"><label>Shipper</label><select name="shipper_id" data-role="SHIPPER"></select></div>
+            <div class="field"><label>Consignee</label><select name="consignee_id" data-role="CONSIGNEE"></select></div>
+            <div class="field"><label>Commodity</label><select name="commodity_id" data-role="COMMODITY"></select></div>
+          </div>
+          <div class="grid grid-4">
+            <div class="field"><label>Notify Party 1</label><select name="notify_1_id" data-role="NOTIFY"></select></div>
+            <div class="field"><label>Notify Party 2</label><select name="notify_2_id" data-role="NOTIFY"></select></div>
+            <div class="field"><label>Port of Loading</label><select name="pol_id" data-role="PORT"></select></div>
+            <div class="field"><label>Port of Discharge</label><select name="pod_id" data-role="PORT"></select></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Cargo & Dates</h2>
+        <div class="card-body">
+          <div class="grid grid-4">
+            <div class="field"><label>BL Number</label><input name="bl_number" /></div>
+            <div class="field"><label>FIN Number</label><input name="fin_number" /></div>
+            <div class="field"><label>ETD</label><input type="date" name="etd" /></div>
+            <div class="field"><label>ETA</label><input type="date" name="eta" /></div>
+          </div>
+          <div class="grid grid-4">
+            <div class="field"><label>Packages</label><input type="number" min="0" name="packages" /><div class="err" data-err="packages"></div></div>
+            <div class="field"><label>Gross Weight (KG)</label><input type="number" min="0" step="0.01" name="gross_weight" /><div class="err" data-err="gross_weight"></div></div>
+            <div class="field"><label>Net Weight (KG)</label><input type="number" min="0" step="0.01" name="net_weight" /><div class="err" data-err="net_weight"></div></div>
+            <div class="field"><label>Marks</label><input name="marks" /></div>
+          </div>
+          <div class="grid grid-2">
+            <div class="field"><label>Notes (printed on booking note)</label><textarea name="notes"></textarea></div>
+            <div class="field"><label>Internal Notes</label><textarea name="internal_notes"></textarea></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="containers-card">
+        <h2>Containers (optional at creation)</h2>
+        <div class="card-body">
+          <div id="new-containers"></div>
+          <button type="button" class="btn btn-sm btn-ghost" id="add-container">+ Add container</button>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button type="submit" class="btn btn-primary" id="save-btn">Save Job</button>
+        <a href="index.html" class="btn btn-ghost">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/validate.js"></script>
+  <script src="js/pages/newJob.js"></script>
+</body>
+</html>
