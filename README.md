@@ -4,7 +4,7 @@
 
 > A job that takes ~45 minutes across spreadsheets takes ~5 minutes here.
 
-![Dashboard](docs/screenshots/dashboard.png)
+> Screenshots of the running app are generated into `docs/screenshots/` — run `npm start` and open `http://localhost:3000` to see the live UI.
 
 ---
 
@@ -22,7 +22,6 @@
 - [Testing](#testing)
 - [Building the Windows installer](#building-the-windows-installer)
 - [Backups](#backups)
-- [More screenshots](#more-screenshots)
 - [License](#license)
 
 ---
@@ -185,12 +184,6 @@ The database is a single file, so the app keeps rotating backups (last 30) in `d
 ```bash
 node src/services/backupService.js
 ```
-
-## More screenshots
-
-| Job detail (hub) | JOBGP report |
-|---|---|
-| ![Job detail](docs/screenshots/job-detail.png) | ![JOBGP](docs/screenshots/report-jobgp.png) |
 
 ## License
 
