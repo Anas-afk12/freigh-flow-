@@ -28,7 +28,10 @@ function createRepo(table, columns, searchColumns, orderBy = 'name') {
   }
 
   function create(data) {
-    const values = columns.map((c) => (data[c] === undefined ? null : data[c]));
+    const values = columns.map((c) => {
+      if (c === 'is_active') return data.is_active === undefined || data.is_active === null ? 1 : data.is_active;
+      return data[c] === undefined ? null : data[c];
+    });
     const info = db
       .prepare(`INSERT INTO ${table} (${insertCols}) VALUES (${insertPlaceholders})`)
       .run(...values);

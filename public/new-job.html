@@ -13,6 +13,8 @@
       <a href="index.html">Dashboard</a>
       <a href="new-job.html" class="active">New Job</a>
       <a href="master-data.html">Master Data</a>
+      <a href="rate-sheet.html">Rate Sheet</a>
+      <a href="import.html">Import</a>
       <a href="reports-gpsht.html">GPSHT</a>
       <a href="reports-jobgp.html">JOBGP</a>
       <a href="settings.html">Settings</a>
@@ -65,6 +67,14 @@
             <div class="field"><label>Notes (printed on booking note)</label><textarea name="notes"></textarea></div>
             <div class="field"><label>Internal Notes</label><textarea name="internal_notes"></textarea></div>
           </div>
+        </div>
+      </div>
+
+      <div class="card" id="rates-card">
+        <h2>Rates <span class="muted" style="font-weight:400;">(auto-filled from the Rate Sheet when POD + container type match — every value stays editable)</span></h2>
+        <div class="card-body">
+          <div id="autofill-status" class="muted" style="margin-bottom:8px;">No rate sheet match yet.</div>
+          <div id="rate-rows"></div>
         </div>
       </div>
 

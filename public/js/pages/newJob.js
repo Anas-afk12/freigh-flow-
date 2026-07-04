@@ -28,6 +28,52 @@
     document.querySelectorAll('select[data-role="PORT"]').forEach((s) => populateSelect(s, ports, { placeholder: '— select —' }));
   }
 
+  // ---- A3: rate auto-fill from the master rate sheet ----
+  const RATE_CHARGES = [
+    ['freight', 'FREIGHT'], ['placement', 'PLACEMENT'], ['lifting', 'LIFT ON'],
+    ['bl_charges', 'BL CHARGES'], ['cro', 'CRO'], ['seal', 'SEAL'],
+  ];
+
+  function renderRateRows(match) {
+    const wrap = document.getElementById('rate-rows');
+    if (!wrap) return;
+    wrap.innerHTML = RATE_CHARGES.map(([key, chargeType]) => `
+      <div class="grid grid-3" data-rate-row="${chargeType}" style="margin-bottom:6px;">
+        <div class="field"><label>${chargeType}</label><input value="${chargeType}" data-rf="charge_type" readonly /></div>
+        <div class="field"><label>Buying</label><input type="number" min="0" step="0.01" data-rf="buying" value="${match && match[`${key}_buying`] != null ? match[`${key}_buying`] : ''}" /></div>
+        <div class="field"><label>Selling</label><input type="number" min="0" step="0.01" data-rf="selling" value="${match && match[`${key}_selling`] != null ? match[`${key}_selling`] : ''}" /></div>
+      </div>`).join('');
+  }
+
+  async function tryAutofill() {
+    const status = document.getElementById('autofill-status');
+    const podId = form.elements['pod_id'] && form.elements['pod_id'].value;
+    const firstType = document.querySelector('#new-containers [data-f="container_type_id"]');
+    const ctId = firstType && firstType.value;
+    if (!podId || !ctId) return;
+    try {
+      const match = await API.get(`/rates/master/match?pod_id=${podId}&container_type_id=${ctId}`);
+      if (match) {
+        renderRateRows(match);
+        status.textContent = 'Rates auto-filled from the rate sheet — edit freely before saving.';
+      } else {
+        status.textContent = 'No rate sheet entry for this POD + container type (enter rates manually or on the job page).';
+      }
+    } catch (e) { /* silent — auto-fill is a helper, never a blocker */ }
+  }
+
+  function collectRates() {
+    const rates = [];
+    document.querySelectorAll('#rate-rows [data-rate-row]').forEach((row) => {
+      const charge = row.dataset.rateRow;
+      const buying = row.querySelector('[data-rf="buying"]').value;
+      const selling = row.querySelector('[data-rf="selling"]').value;
+      if (buying !== '') rates.push({ rate_type: 'BUYING', charge_type: charge, amount: buying, currency: 'USD' });
+      if (selling !== '') rates.push({ rate_type: 'SELLING', charge_type: charge, amount: selling, currency: 'USD' });
+    });
+    return rates;
+  }
+
   function containerRowHtml(idx) {
     const opts = containerTypes.map((t) => `<option value="${t.id}">${t.code}</option>`).join('');
     return `<div class="grid grid-4" data-cidx="${idx}" style="margin-bottom:8px;">
@@ -51,6 +97,9 @@
     wrap.querySelector(`[data-remove="${idx}"]`).addEventListener('click', (e) => {
       e.target.closest('[data-cidx]').remove();
     });
+    // First container's type participates in rate auto-fill (A3).
+    const typeSel = wrap.querySelector(`[data-cidx="${idx}"] [data-f="container_type_id"]`);
+    if (typeSel) typeSel.addEventListener('change', tryAutofill);
   }
 
   function collectContainers() {
@@ -86,6 +135,8 @@
     document.getElementById('title').textContent = `Edit Job ${job.job_number}`;
     document.getElementById('save-btn').textContent = 'Update Job';
     document.getElementById('containers-card').style.display = 'none'; // containers managed on detail page
+    const ratesCard = document.getElementById('rates-card');
+    if (ratesCard) ratesCard.style.display = 'none'; // rates managed on detail page
     for (const [k, v] of Object.entries(job)) {
       const el = form.elements[k];
       if (el && v != null) el.value = v;
@@ -103,6 +154,7 @@
         setTimeout(() => (location.href = `job-detail.html?id=${editId}`), 500);
       } else {
         data.containers = collectContainers();
+        data.rates = collectRates();
         const job = await API.post('/jobs', data);
         Toast.success(`Job ${job.job_number} created.`);
         setTimeout(() => (location.href = `job-detail.html?id=${job.id}`), 500);
@@ -116,7 +168,12 @@
     try {
       await loadOptions();
       if (editId) await loadForEdit();
-      else document.querySelector('[name="created_date"]').value = new Date().toISOString().slice(0, 10);
+      else {
+        document.querySelector('[name="created_date"]').value = new Date().toISOString().slice(0, 10);
+        renderRateRows(null);
+        const podSel = form.elements['pod_id'];
+        if (podSel) podSel.addEventListener('change', tryAutofill);
+      }
     } catch (e) { Toast.error(e.message); }
   })();
 })();

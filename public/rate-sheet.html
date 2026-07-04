@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FreightFlow PRO — Master Data</title>
+  <title>FreightFlow PRO — Rate Sheet</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -12,8 +12,8 @@
     <nav>
       <a href="index.html">Dashboard</a>
       <a href="new-job.html">New Job</a>
-      <a href="master-data.html" class="active">Master Data</a>
-      <a href="rate-sheet.html">Rate Sheet</a>
+      <a href="master-data.html">Master Data</a>
+      <a href="rate-sheet.html" class="active">Rate Sheet</a>
       <a href="import.html">Import</a>
       <a href="reports-gpsht.html">GPSHT</a>
       <a href="reports-jobgp.html">JOBGP</a>
@@ -22,17 +22,15 @@
   </div>
 
   <div class="container">
-    <div class="page-head"><h1>Master Data</h1></div>
+    <div class="page-head"><h1>Rate Sheet</h1></div>
     <div class="tabs" id="tabs">
-      <button data-tab="clients" class="active">Clients</button>
-      <button data-tab="ports">Ports</button>
-      <button data-tab="commodities">Commodities</button>
-      <button data-tab="container-types">Container Types</button>
+      <button data-tab="master" class="active">Freight Rates</button>
+      <button data-tab="local">Local Charges</button>
+      <button data-tab="lines">Shipping Lines</button>
     </div>
     <div class="card"><div class="card-body">
       <div class="toolbar">
-        <input type="search" id="search" placeholder="Search…" />
-        <label style="display:flex;align-items:center;gap:6px;margin:0;"><input type="checkbox" id="active-only" style="width:auto;" /> Active only</label>
+        <span class="muted" id="tab-hint"></span>
         <span class="spacer"></span>
         <button class="btn btn-primary btn-sm" id="add-btn">+ Add</button>
       </div>
@@ -44,6 +42,6 @@
   <script src="js/toast.js"></script>
   <script src="js/modal.js"></script>
   <script src="js/table.js"></script>
-  <script src="js/pages/masterData.js"></script>
+  <script src="js/pages/rateSheet.js"></script>
 </body>
 </html>

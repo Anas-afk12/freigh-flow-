@@ -71,8 +71,18 @@ const create = asyncHandler(async (req, res) => {
   const containers = Array.isArray(body.containers) ? body.containers : [];
   for (const c of containers) assertRef(containerTypesRepo, c.container_type_id, 'Container type');
 
+  // Optional rate rows (auto-filled from the rate sheet, still user-edited).
+  const rates = (Array.isArray(body.rates) ? body.rates : []).filter(
+    (r) => r && r.charge_type && r.amount !== undefined && r.amount !== null && r.amount !== ''
+  );
+  for (const r of rates) {
+    requireEnum(r.rate_type, ['BUYING', 'SELLING'], 'rate_type');
+    requireEnum(r.currency || 'USD', ['USD', 'PKR'], 'currency');
+    optionalNonNegativeNumber(r.amount, 'amount');
+  }
+
   const jobNumber = jobNumberService.generate();
-  const jobId = jobsRepo.create(jobNumber, body, containers);
+  const jobId = jobsRepo.create(jobNumber, body, containers, rates);
   ok(res, jobsRepo.getFull(jobId), 201);
 });
 
