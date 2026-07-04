@@ -12,7 +12,8 @@
     "db:reset": "node src/db/reset.js",
     "electron": "electron .",
     "build": "electron-builder",
-    "build:win": "electron-builder --win --x64"
+    "build:win": "electron-builder --win --x64",
+    "db:migrate": "node src/db/migrate.js"
   },
   "author": "",
   "license": "MIT",
@@ -35,7 +36,9 @@
   "build": {
     "appId": "com.freightflow.pro",
     "productName": "FreightFlow PRO",
-    "directories": { "output": "dist" },
+    "directories": {
+      "output": "dist"
+    },
     "files": [
       "public/**/*",
       "src/**/*",
@@ -44,8 +47,16 @@
       "package.json",
       ".env"
     ],
-    "extraResources": [ { "from": "data", "to": "data" } ],
-    "win": { "target": "nsis", "icon": "build/icon.ico" },
+    "extraResources": [
+      {
+        "from": "data",
+        "to": "data"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,

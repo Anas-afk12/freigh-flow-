@@ -20,9 +20,13 @@ function generateTaxes(jobId) {
   const zktPct = settingsRepo.getNumber('zkt_percentage', 2.5);
   const khrtPct = settingsRepo.getNumber('khrt_percentage', 7.5);
 
-  const positivePkr = profit.profit_pkr > 0 ? profit.profit_pkr : 0;
-  const zktAmount = round2((positivePkr * zktPct) / 100);
-  const khrtAmount = round2((positivePkr * khrtPct) / 100);
+  // Integer math on PKR paisa (B1): tax = round(base * pct / 100) in paisa.
+  const positivePkrPaisa = profit._cents.profit_pkr > 0 ? profit._cents.profit_pkr : 0;
+  const zktPaisa = Math.round((positivePkrPaisa * zktPct) / 100);
+  const khrtPaisa = Math.round((positivePkrPaisa * khrtPct) / 100);
+  const positivePkr = positivePkrPaisa / 100;
+  const zktAmount = zktPaisa / 100;
+  const khrtAmount = khrtPaisa / 100;
 
   const tx = db.transaction(() => {
     taxesRepo.deleteByJob(jobId);

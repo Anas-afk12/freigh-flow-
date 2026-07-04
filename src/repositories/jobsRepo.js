@@ -1,6 +1,7 @@
 // SQL for the jobs hub table and assembling a full job view with children.
 const db = require('../db/connection');
 const { NotFoundError } = require('../utils/errors');
+const { fromCents } = require('../utils/money');
 
 // Columns a client may set on create/update (job_number & timestamps excluded —
 // job_number is generated atomically, exchange_rate_locked is set by services).
@@ -97,8 +98,12 @@ function getFull(id) {
       `SELECT r.*, v.name AS vendor_name FROM rates r
        LEFT JOIN clients v ON r.vendor_id = v.id WHERE r.job_id = ? ORDER BY r.rate_type, r.id`
     )
-    .all(id);
-  job.taxes = db.prepare('SELECT * FROM taxes WHERE job_id = ? ORDER BY tax_type').all(id);
+    .all(id)
+    .map((r) => ({ ...r, amount: fromCents(r.amount) }));
+  job.taxes = db
+    .prepare('SELECT * FROM taxes WHERE job_id = ? ORDER BY tax_type')
+    .all(id)
+    .map((t) => ({ ...t, base_amount: fromCents(t.base_amount), amount: fromCents(t.amount) }));
   job.documents = db
     .prepare('SELECT * FROM documents WHERE job_id = ? ORDER BY generated_date DESC, id DESC')
     .all(id);
