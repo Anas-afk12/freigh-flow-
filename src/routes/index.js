@@ -14,6 +14,7 @@ router.use('/jobs', jobs);
 router.use('/rates', rateSheet.rates);
 router.use('/shipping-lines', rateSheet.lines);
 router.use('/import', require('./import'));
+router.use('/rebates', require('./rebates'));
 router.use('/reports', reports);
 router.use('/documents', documents);
 router.use('/settings', settings);

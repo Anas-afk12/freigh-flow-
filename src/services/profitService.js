@@ -60,4 +60,37 @@ function calculateProfit(jobId, { persist = true } = {}) {
   };
 }
 
-module.exports = { calculateProfit, ensureLockedRate };
+// A2 — adjusted profit including rebates & commissions, all converted to USD
+// cents via the job's locked rate BEFORE entering the formula:
+//   Adjusted Profit = Gross Profit − Client Rebates + Line Rebates − Agent Commissions
+// With no rebate rows this returns exactly the gross profit — a job that
+// never uses rebates behaves identically to before.
+function calculateAdjustedProfit(jobId, { persist = false } = {}) {
+  const profit = calculateProfit(jobId, { persist });
+  const rebatesRepo = require('../repositories/rebatesRepo');
+  const rows = rebatesRepo.rawForProfit(jobId);
+
+  let clientRebates = 0;
+  let lineRebates = 0;
+  let agentCommissions = 0;
+  for (const r of rows) {
+    const usdCents = rowToUsdCents(r, profit.exchange_rate);
+    if (r.type === 'CLIENT_REBATE') clientRebates += usdCents;
+    else if (r.type === 'LINE_REBATE') lineRebates += usdCents;
+    else if (r.type === 'AGENT_COMMISSION') agentCommissions += usdCents;
+  }
+
+  const adjustedUsdCents = profit._cents.profit_usd - clientRebates + lineRebates - agentCommissions;
+  const adjustedPkrCents = usdCentsToPkrCents(adjustedUsdCents, profit.exchange_rate);
+  return {
+    ...profit,
+    client_rebates: fromCents(clientRebates),
+    line_rebates: fromCents(lineRebates),
+    agent_commissions: fromCents(agentCommissions),
+    adjusted_profit_usd: fromCents(adjustedUsdCents),
+    adjusted_profit_pkr: fromCents(adjustedPkrCents),
+    _cents: { ...profit._cents, adjusted_usd: adjustedUsdCents, adjusted_pkr: adjustedPkrCents },
+  };
+}
+
+module.exports = { calculateProfit, calculateAdjustedProfit, ensureLockedRate };
