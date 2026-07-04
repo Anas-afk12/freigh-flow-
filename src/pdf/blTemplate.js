@@ -29,6 +29,7 @@ function build({ job, settings, docNumber }) {
     theme: 'grid',
     styles: { font: 'times', fontSize: 9, cellPadding: 1.5 },
     body: [
+      ['Shipping Line', [job.shipping_line_code, job.shipping_line_name].filter(Boolean).join(' — ')],
       ['Vessel / Voyage', `${bl.vessel || firstContainerVessel(job) || ''}  ${bl.voyage || ''}`.trim()],
       ['Port of Loading', bl.port_loading || job.pol_name || ''],
       ['Port of Discharge', bl.port_discharge || job.pod_name || ''],

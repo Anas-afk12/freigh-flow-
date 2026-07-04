@@ -14,13 +14,15 @@
   }
 
   async function loadOptions() {
-    const [clients, ports, commodities, cTypes] = await Promise.all([
+    const [clients, ports, commodities, cTypes, lines] = await Promise.all([
       API.get('/clients?active=1'),
       API.get('/ports?active=1'),
       API.get('/commodities?active=1'),
       API.get('/container-types?active=1'),
+      API.get('/shipping-lines?active=1'),
     ]);
     containerTypes = cTypes;
+    document.querySelectorAll('select[data-role="LINE"]').forEach((s) => populateSelect(s, lines, { labelKey: 'code', placeholder: '— none —' }));
     document.querySelectorAll('select[data-role="SHIPPER"]').forEach((s) => populateSelect(s, clients.filter((c) => c.type === 'SHIPPER'), { placeholder: '— select —' }));
     document.querySelectorAll('select[data-role="CONSIGNEE"]').forEach((s) => populateSelect(s, clients.filter((c) => c.type === 'CONSIGNEE'), { placeholder: '— select —' }));
     document.querySelectorAll('select[data-role="NOTIFY"]').forEach((s) => populateSelect(s, clients.filter((c) => c.type === 'NOTIFY'), { placeholder: '— none —' }));
@@ -114,10 +116,22 @@
     }).filter((c) => c.container_number || c.container_type_id);
   }
 
+  // LC fields are stored via a dedicated endpoint (A5) — split them out.
+  const LC_FIELDS = ['lc_number', 'lc_issuing_bank', 'lc_expiry_date', 'lc_amount', 'lc_currency',
+    'lc_status', 'lc_beneficiary', 'lc_terms', 'lc_documents_required', 'lc_last_shipment_date'];
+
   function collectForm() {
     const data = {};
     let valid = true;
     new FormData(form).forEach((v, k) => { data[k] = v === '' ? null : v; });
+    const lc = {};
+    let lcUsed = false;
+    for (const f of LC_FIELDS) {
+      lc[f] = data[f];
+      if (data[f] != null) lcUsed = true;
+      delete data[f];
+    }
+    data._lc = lcUsed ? lc : null;
     // Numeric checks mirror server.
     for (const f of ['packages', 'gross_weight', 'net_weight']) {
       const errEl = document.querySelector(`[data-err="${f}"]`);
@@ -147,15 +161,19 @@
     e.preventDefault();
     const data = collectForm();
     if (!data) { Toast.error('Please fix the highlighted fields.'); return; }
+    const lc = data._lc;
+    delete data._lc;
     try {
       if (editId) {
         await API.put(`/jobs/${editId}`, data);
+        if (lc) await API.put(`/jobs/${editId}/lc`, lc);
         Toast.success('Job updated.');
         setTimeout(() => (location.href = `job-detail.html?id=${editId}`), 500);
       } else {
         data.containers = collectContainers();
         data.rates = collectRates();
         const job = await API.post('/jobs', data);
+        if (lc) await API.put(`/jobs/${job.id}/lc`, lc);
         Toast.success(`Job ${job.job_number} created.`);
         setTimeout(() => (location.href = `job-detail.html?id=${job.id}`), 500);
       }

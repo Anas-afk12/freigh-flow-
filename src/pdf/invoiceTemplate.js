@@ -56,6 +56,26 @@ function build({ job, settings, docNumber, sellingRates }) {
   });
   y = doc.lastAutoTable.finalY + 6;
 
+  // A5 — LC block appears ONLY when the job actually has an LC number.
+  if (job.lc_number) {
+    doc.autoTable({
+      startY: y,
+      theme: 'grid',
+      head: [['Letter of Credit', '']],
+      body: [
+        ['LC Number', job.lc_number],
+        ['Issuing Bank', job.lc_issuing_bank || ''],
+        ['LC Amount', job.lc_amount != null ? `${money(job.lc_amount)} ${job.lc_currency || ''}` : ''],
+        ['Expiry Date', job.lc_expiry_date ? formatDisplay(job.lc_expiry_date) : ''],
+      ],
+      styles: { font: 'times', fontSize: 9, cellPadding: 1.6 },
+      headStyles: { fillColor: [40, 40, 40] },
+      columnStyles: { 0: { fontStyle: 'bold', cellWidth: 45 } },
+      margin: { left: MARGIN, right: MARGIN },
+    });
+    y = doc.lastAutoTable.finalY + 5;
+  }
+
   if (settings.bank_details) {
     doc.setFont('times', 'normal');
     doc.setFontSize(8);

@@ -3,7 +3,10 @@
 // (via DataTable), print (window.print) and Excel export.
 (() => {
   const report = window.REPORT;
-  const NUMERIC_KEYS = new Set(['freight_received', 'freight_paid', 'profit_usd', 'profit_pkr', 'zkt', 'khrt', 'net_gp']);
+  const NUMERIC_KEYS = new Set([
+    'freight_received', 'freight_paid', 'profit_usd', 'profit_pkr', 'zkt', 'khrt', 'net_gp',
+    'client_rebates', 'line_rebates', 'agent_commissions', 'adjusted_profit_usd', 'amount',
+  ]);
   const els = {
     table: document.getElementById('table'),
     status: document.getElementById('status'),
@@ -13,8 +16,8 @@
 
   function queryString() {
     const p = new URLSearchParams();
-    if (els.status.value) p.set('status', els.status.value);
-    if (els.archived.checked) p.set('includeArchived', '1');
+    if (els.status && els.status.value) p.set('status', els.status.value);
+    if (els.archived && els.archived.checked) p.set('includeArchived', '1');
     if (report === 'gpsht') {
       const pod = document.getElementById('pod');
       const etdFrom = document.getElementById('etdFrom');
@@ -56,10 +59,10 @@
     } catch (e) { /* non-fatal */ }
   }
 
-  els.status.addEventListener('change', load);
-  els.archived.addEventListener('change', load);
+  if (els.status) els.status.addEventListener('change', load);
+  if (els.archived) els.archived.addEventListener('change', load);
   document.querySelectorAll('input[type="date"], #pod').forEach((el) => el.addEventListener('change', load));
-  els.exportBtn.addEventListener('click', () => {
+  if (els.exportBtn) els.exportBtn.addEventListener('click', () => {
     window.location = API.url(`/reports/${report}/export?${queryString()}`);
   });
 

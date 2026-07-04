@@ -23,6 +23,7 @@ function build({ job, settings, docNumber }) {
       ['Port of Discharge', job.pod_name || ''],
       ['ETD', job.etd ? formatDisplay(job.etd) : ''],
       ['ETA', job.eta ? formatDisplay(job.eta) : ''],
+      ['Shipping Line', [job.shipping_line_code, job.shipping_line_name].filter(Boolean).join(' — ')],
       ['Vessel', firstC.vessel || ''],
       ['Voyage', firstC.voyage || ''],
     ],

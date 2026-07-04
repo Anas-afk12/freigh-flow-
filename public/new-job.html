@@ -17,6 +17,7 @@
       <a href="import.html">Import</a>
       <a href="reports-gpsht.html">GPSHT</a>
       <a href="reports-jobgp.html">JOBGP</a>
+      <a href="reports-payables.html">AP Aging</a>
       <a href="settings.html">Settings</a>
     </nav>
   </div>
@@ -45,6 +46,9 @@
             <div class="field"><label>Port of Loading</label><select name="pol_id" data-role="PORT"></select></div>
             <div class="field"><label>Port of Discharge</label><select name="pod_id" data-role="PORT"></select></div>
           </div>
+          <div class="grid grid-4">
+            <div class="field"><label>Shipping Line</label><select name="shipping_line_id" data-role="LINE"></select></div>
+          </div>
         </div>
       </div>
 
@@ -52,21 +56,72 @@
         <h2>Cargo & Dates</h2>
         <div class="card-body">
           <div class="grid grid-4">
-            <div class="field"><label>BL Number</label><input name="bl_number" /></div>
+            <div class="field"><label>BL Number (Master BL)</label><input name="bl_number" /></div>
+            <div class="field"><label>House BL</label><input name="house_bl_number" /></div>
             <div class="field"><label>FIN Number</label><input name="fin_number" /></div>
-            <div class="field"><label>ETD</label><input type="date" name="etd" /></div>
-            <div class="field"><label>ETA</label><input type="date" name="eta" /></div>
+            <div class="field"><label>Marks</label><input name="marks" /></div>
           </div>
           <div class="grid grid-4">
+            <div class="field"><label>ETD</label><input type="date" name="etd" /></div>
+            <div class="field"><label>ETA</label><input type="date" name="eta" /></div>
             <div class="field"><label>Packages</label><input type="number" min="0" name="packages" /><div class="err" data-err="packages"></div></div>
+            <div class="field"><label>CBM <span class="muted">(LCL W/M pricing)</span></label><input type="number" min="0" step="0.001" name="cbm" /></div>
+          </div>
+          <div class="grid grid-4">
             <div class="field"><label>Gross Weight (KG)</label><input type="number" min="0" step="0.01" name="gross_weight" /><div class="err" data-err="gross_weight"></div></div>
             <div class="field"><label>Net Weight (KG)</label><input type="number" min="0" step="0.01" name="net_weight" /><div class="err" data-err="net_weight"></div></div>
-            <div class="field"><label>Marks</label><input name="marks" /></div>
           </div>
           <div class="grid grid-2">
             <div class="field"><label>Notes (printed on booking note)</label><textarea name="notes"></textarea></div>
             <div class="field"><label>Internal Notes</label><textarea name="internal_notes"></textarea></div>
           </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body" style="padding:0;">
+          <details>
+            <summary style="padding:12px 16px;cursor:pointer;font-weight:700;font-size:14px;">LC Details <span class="muted" style="font-weight:400;">(optional — only used if your shipment is under a Letter of Credit)</span></summary>
+            <div style="padding:0 16px 16px;">
+              <div class="grid grid-4">
+                <div class="field"><label>LC Number</label><input name="lc_number" data-lc /></div>
+                <div class="field"><label>Issuing Bank</label><input name="lc_issuing_bank" data-lc /></div>
+                <div class="field"><label>LC Amount</label><input type="number" min="0" step="0.01" name="lc_amount" data-lc /></div>
+                <div class="field"><label>Currency</label><select name="lc_currency" data-lc><option value=""></option><option>USD</option><option>PKR</option></select></div>
+              </div>
+              <div class="grid grid-4">
+                <div class="field"><label>Status</label><select name="lc_status" data-lc><option value=""></option><option>PENDING</option><option>ACTIVE</option><option>AMENDED</option><option>CLOSED</option><option>EXPIRED</option></select></div>
+                <div class="field"><label>Expiry Date</label><input type="date" name="lc_expiry_date" data-lc /></div>
+                <div class="field"><label>Last Shipment Date</label><input type="date" name="lc_last_shipment_date" data-lc /></div>
+                <div class="field"><label>Beneficiary</label><input name="lc_beneficiary" data-lc /></div>
+              </div>
+              <div class="grid grid-2">
+                <div class="field"><label>Terms</label><textarea name="lc_terms" data-lc></textarea></div>
+                <div class="field"><label>Documents Required</label><textarea name="lc_documents_required" data-lc></textarea></div>
+              </div>
+            </div>
+          </details>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body" style="padding:0;">
+          <details>
+            <summary style="padding:12px 16px;cursor:pointer;font-weight:700;font-size:14px;">Additional Details <span class="muted" style="font-weight:400;">(optional — customs, insurance, VGM; leave blank if unused)</span></summary>
+            <div style="padding:0 16px 16px;">
+              <div class="grid grid-3">
+                <div class="field"><label>Customs Status</label><input name="customs_status" /></div>
+                <div class="field"><label>Customs Clearing Agent</label><input name="customs_clearing_agent" /></div>
+                <div class="field"><label>Customs Reference</label><input name="customs_reference" /></div>
+              </div>
+              <div class="grid grid-4">
+                <div class="field"><label>Insurance Policy #</label><input name="insurance_policy_number" /></div>
+                <div class="field"><label>Insured Value</label><input type="number" min="0" step="0.01" name="insurance_insured_value" /></div>
+                <div class="field"><label>Insurer</label><input name="insurance_insurer" /></div>
+                <div class="field"><label>VGM (KG)</label><input type="number" min="0" step="0.01" name="vgm_kg" /></div>
+              </div>
+            </div>
+          </details>
         </div>
       </div>
 

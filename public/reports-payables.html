@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FreightFlow PRO — GPSHT Report</title>
+  <title>FreightFlow PRO — Payables Aging</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -15,22 +15,18 @@
       <a href="master-data.html">Master Data</a>
       <a href="rate-sheet.html">Rate Sheet</a>
       <a href="import.html">Import</a>
-      <a href="reports-gpsht.html" class="active">GPSHT</a>
+      <a href="reports-gpsht.html">GPSHT</a>
       <a href="reports-jobgp.html">JOBGP</a>
-      <a href="reports-payables.html">AP Aging</a>
+      <a href="reports-payables.html" class="active">AP Aging</a>
       <a href="settings.html">Settings</a>
     </nav>
   </div>
 
   <div class="container">
-    <div class="page-head"><h1>GPSHT — Shipment / Freight Tracking</h1></div>
+    <div class="page-head"><h1>Accounts Payable — Aging (unpaid vendor charges)</h1></div>
     <div class="card"><div class="card-body">
       <div class="toolbar">
-        <select id="status"><option value="">All statuses</option><option>BOOKED</option><option>SAILED</option><option>DELIVERED</option><option>CLOSED</option><option>CANCELLED</option></select>
-        <select id="pod"><option value="">All PODs</option></select>
-        <label style="margin:0;">ETD from <input type="date" id="etdFrom" /></label>
-        <label style="margin:0;">to <input type="date" id="etdTo" /></label>
-        <label style="display:flex;align-items:center;gap:6px;margin:0;"><input type="checkbox" id="archived" style="width:auto;" /> Incl. archived</label>
+        <span class="muted">Unpaid BUYING rates grouped by vendor, oldest first.</span>
         <span class="spacer"></span>
         <button class="btn btn-sm btn-ghost" onclick="window.print()">Print</button>
         <button class="btn btn-sm btn-accent" id="export">Export Excel</button>
@@ -43,7 +39,7 @@
   <script src="js/toast.js"></script>
   <script src="js/modal.js"></script>
   <script src="js/table.js"></script>
-  <script>window.REPORT = 'gpsht';</script>
+  <script>window.REPORT = 'payables-aging';</script>
   <script src="js/pages/reports.js"></script>
 </body>
 </html>

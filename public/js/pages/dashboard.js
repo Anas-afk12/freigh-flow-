@@ -5,10 +5,18 @@
     stats: document.getElementById('stats'),
     search: document.getElementById('search'),
     status: document.getElementById('status'),
+    line: document.getElementById('line'),
     archived: document.getElementById('archived'),
     table: document.getElementById('jobs-table'),
     pager: document.getElementById('pager'),
   };
+
+  async function loadLines() {
+    try {
+      const lines = await API.get('/shipping-lines?active=1');
+      els.line.innerHTML = '<option value="">All lines</option>' + lines.map((l) => `<option value="${l.id}">${l.code}</option>`).join('');
+    } catch (e) { /* non-fatal */ }
+  }
 
   async function loadStats() {
     try {
@@ -25,6 +33,7 @@
     const params = new URLSearchParams({
       search: els.search.value.trim(),
       status: els.status.value,
+      shippingLineId: els.line.value,
       includeArchived: els.archived.checked ? '1' : '0',
       page: String(page),
       limit: '25',
@@ -46,7 +55,9 @@
         { key: 'consignee_name', header: 'Consignee' },
         { key: 'pol_name', header: 'POL' },
         { key: 'pod_name', header: 'POD' },
+        { key: 'shipping_line_code', header: 'Line' },
         { key: 'etd', header: 'ETD' },
+        { key: 'bl_status', header: 'BL', render: (r) => `<span class="badge ${r.bl_status === 'FORWARDED' ? 'DELIVERED' : r.bl_status === 'RECEIVED' ? 'SAILED' : 'CLOSED'}">${(r.bl_status || '').replace('_', ' ')}</span>` },
         { key: 'status', header: 'Status', render: (r) => `<span class="badge ${r.status}">${r.status}</span>${r.is_archived ? ' <span class="muted">(archived)</span>' : ''}` },
         { key: '_open', header: '', render: (r) => `<a class="btn btn-sm btn-ghost" href="job-detail.html?id=${r.id}">Open</a>` },
       ],
@@ -72,8 +83,10 @@
   const debounced = () => { clearTimeout(t); t = setTimeout(() => { page = 1; loadJobs(); }, 250); };
   els.search.addEventListener('input', debounced);
   els.status.addEventListener('change', () => { page = 1; loadJobs(); });
+  els.line.addEventListener('change', () => { page = 1; loadJobs(); });
   els.archived.addEventListener('change', () => { page = 1; loadJobs(); });
 
+  loadLines();
   loadStats();
   loadJobs();
 })();
