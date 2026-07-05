@@ -144,14 +144,14 @@
     let html = '';
     if (lcFields.length) {
       html += `<div class="card"><div class="card-body" style="padding:0;"><details>
-        <summary style="padding:12px 16px;cursor:pointer;font-weight:700;font-size:14px;">LC Details</summary>
-        <div style="padding:0 16px 16px;"><dl class="kv">${lcFields.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl></div>
+        <summary>LC Details</summary>
+        <div><dl class="kv">${lcFields.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl></div>
       </details></div></div>`;
     }
     if (extraFields.length) {
       html += `<div class="card"><div class="card-body" style="padding:0;"><details>
-        <summary style="padding:12px 16px;cursor:pointer;font-weight:700;font-size:14px;">Additional Details</summary>
-        <div style="padding:0 16px 16px;"><dl class="kv">${extraFields.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl></div>
+        <summary>Additional Details</summary>
+        <div><dl class="kv">${extraFields.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl></div>
       </details></div></div>`;
     }
     return html;
@@ -204,7 +204,7 @@
         { key: 'seal_number', header: 'Seal #' },
         { key: 'vessel', header: 'Vessel' },
         { key: 'voyage', header: 'Voyage' },
-        { key: 'status', header: 'Status', render: (r) => `<span class="badge ${r.status === 'DELIVERED' ? 'DELIVERED' : 'BOOKED'}">${r.status}</span>` },
+        { key: 'status', header: 'Status', render: (r) => `<span class="badge ${r.status}">${r.status}</span>` },
       ], job.containers, { emptyText: 'No containers.' });
   }
 
@@ -238,12 +238,17 @@
       } catch (e) { Toast.error(e.message); }
     };
 
-    document.getElementById('gen-taxes').onclick = async () => {
+    document.getElementById('gen-taxes').onclick = async (e) => {
+      const btn = e.currentTarget;
+      btn.disabled = true; // prevent double generation from double-clicks
       try {
         await API.post(`/jobs/${jobId}/generate-taxes`, {});
         Toast.success('Taxes generated (exchange rate locked).');
         load();
-      } catch (e) { Toast.error(e.message); }
+      } catch (err) {
+        Toast.error(err.message);
+        btn.disabled = false;
+      }
     };
 
     document.getElementById('clone-btn').onclick = async () => {

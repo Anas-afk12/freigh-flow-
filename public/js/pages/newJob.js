@@ -163,10 +163,13 @@
     if (!data) { Toast.error('Please fix the highlighted fields.'); return; }
     const lc = data._lc;
     delete data._lc;
+    const saveBtn = document.getElementById('save-btn');
+    saveBtn.disabled = true; // prevent duplicate jobs from double-clicks
     try {
       if (editId) {
         await API.put(`/jobs/${editId}`, data);
-        if (lc) await API.put(`/jobs/${editId}/lc`, lc);
+        // Always send LC on edit so clearing every LC field actually clears it.
+        await API.put(`/jobs/${editId}/lc`, lc || {});
         Toast.success('Job updated.');
         setTimeout(() => (location.href = `job-detail.html?id=${editId}`), 500);
       } else {
@@ -177,7 +180,10 @@
         Toast.success(`Job ${job.job_number} created.`);
         setTimeout(() => (location.href = `job-detail.html?id=${job.id}`), 500);
       }
-    } catch (err) { Toast.error(err.message); }
+    } catch (err) {
+      Toast.error(err.message);
+      saveBtn.disabled = false;
+    }
   });
 
   document.getElementById('add-container').addEventListener('click', addContainerRow);

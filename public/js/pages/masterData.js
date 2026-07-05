@@ -14,6 +14,8 @@
         { name: 'email', label: 'Email' },
         { name: 'contact_person', label: 'Contact Person' },
         { name: 'tax_id', label: 'Tax ID' },
+        { name: 'is_agent', label: 'Is Agent (earns commission)', type: 'select', options: [{ value: 0, label: 'No' }, { value: 1, label: 'Yes' }] },
+        { name: 'commission_rate', label: 'Commission Rate (%)', type: 'number', min: 0, step: '0.01' },
       ],
     },
     ports: {
