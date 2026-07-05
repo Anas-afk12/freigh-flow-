@@ -28,7 +28,11 @@ function createRepo(table, columns, searchColumns, orderBy = 'name') {
   }
 
   function create(data) {
-    const values = columns.map((c) => (data[c] === undefined ? null : data[c]));
+    const values = columns.map((c) => {
+      if (c === 'is_active') return data.is_active === undefined || data.is_active === null ? 1 : data.is_active;
+      if (c === 'is_agent') return data.is_agent === undefined || data.is_agent === null ? 0 : data.is_agent;
+      return data[c] === undefined ? null : data[c];
+    });
     const info = db
       .prepare(`INSERT INTO ${table} (${insertCols}) VALUES (${insertPlaceholders})`)
       .run(...values);
@@ -36,8 +40,15 @@ function createRepo(table, columns, searchColumns, orderBy = 'name') {
   }
 
   function update(id, data) {
-    if (!getById(id)) throw new NotFoundError(`${table} #${id} not found.`);
-    const values = columns.map((c) => (data[c] === undefined ? null : data[c]));
+    const existing = getById(id);
+    if (!existing) throw new NotFoundError(`${table} #${id} not found.`);
+    const values = columns.map((c) => {
+      // NOT NULL flag columns keep their current value when not provided.
+      if ((c === 'is_active' || c === 'is_agent') && (data[c] === undefined || data[c] === null)) {
+        return existing[c];
+      }
+      return data[c] === undefined ? null : data[c];
+    });
     db.prepare(`UPDATE ${table} SET ${updateSet} WHERE id = ?`).run(...values, id);
     return getById(id);
   }

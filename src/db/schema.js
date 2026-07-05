@@ -130,12 +130,13 @@ function createSchema() {
       FOREIGN KEY (container_type_id) REFERENCES container_types(id)
     );
 
+    -- Monetary amounts are stored as INTEGER minor units (cents/paisa) — B1.
     CREATE TABLE IF NOT EXISTS rates (
       id             INTEGER PRIMARY KEY AUTOINCREMENT,
       job_id         INTEGER NOT NULL,
       rate_type      TEXT NOT NULL CHECK(rate_type IN ('BUYING','SELLING')),
       charge_type    TEXT NOT NULL,
-      amount         DECIMAL NOT NULL CHECK(amount >= 0),
+      amount         INTEGER NOT NULL CHECK(amount >= 0),
       currency       TEXT NOT NULL DEFAULT 'USD' CHECK(currency IN ('USD','PKR')),
       vendor_id      INTEGER,
       invoice_number TEXT,
@@ -152,8 +153,8 @@ function createSchema() {
       job_id      INTEGER NOT NULL,
       tax_type    TEXT NOT NULL CHECK(tax_type IN ('ZKT','KHRT')),
       percentage  DECIMAL NOT NULL,
-      base_amount DECIMAL NOT NULL,
-      amount      DECIMAL NOT NULL,
+      base_amount INTEGER NOT NULL, -- PKR paisa (minor units)
+      amount      INTEGER NOT NULL, -- PKR paisa (minor units)
       paid_status TEXT NOT NULL DEFAULT 'UNPAID' CHECK(paid_status IN ('UNPAID','PAID')),
       paid_date   DATE,
       paid_ref    TEXT,

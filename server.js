@@ -19,7 +19,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: '10mb' })); // CSV imports arrive as JSON text
 app.use(logger);
 
 app.get('/favicon.ico', (req, res) => res.status(204).end());

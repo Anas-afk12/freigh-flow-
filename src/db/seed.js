@@ -3,6 +3,7 @@
 // data already exists and skips, so it is safe to run on every boot.
 const db = require('./connection');
 const { createSchema } = require('./schema');
+const { toCents } = require('../utils/money');
 
 const SETTINGS = [
   ['job_prefix', 'EUMEX'],
@@ -77,6 +78,9 @@ const SELLING_RATES = [
 
 function seed() {
   createSchema();
+  // Apply any pending schema migrations before seeding (B2). schema.js is the
+  // frozen baseline; all newer schema work lives in src/db/migrations/.
+  require('./migrate').runMigrations();
 
   const seedTx = db.transaction(() => {
     // Settings — insert-or-ignore so re-runs never clobber user edits.
@@ -139,12 +143,12 @@ function seed() {
     const insBuy = db.prepare(
       'INSERT INTO rates (job_id, rate_type, charge_type, amount, currency, vendor_id) VALUES (?,?,?,?,?,?)'
     );
-    for (const [charge, amount, cur] of BUYING_RATES) insBuy.run(jobId, 'BUYING', charge, amount, cur, vendorId);
+    for (const [charge, amount, cur] of BUYING_RATES) insBuy.run(jobId, 'BUYING', charge, toCents(amount), cur, vendorId);
 
     const insSell = db.prepare(
       'INSERT INTO rates (job_id, rate_type, charge_type, amount, currency) VALUES (?,?,?,?,?)'
     );
-    for (const [charge, amount, cur] of SELLING_RATES) insSell.run(jobId, 'SELLING', charge, amount, cur);
+    for (const [charge, amount, cur] of SELLING_RATES) insSell.run(jobId, 'SELLING', charge, toCents(amount), cur);
 
     return { skipped: false, jobId };
   });

@@ -25,6 +25,7 @@ const DataTable = (() => {
           return `<tr data-i="${i}">${tds}</tr>`;
         })
         .join('');
+      container.classList.add('table-scroll'); // wide tables scroll inside, never the page
       container.innerHTML = `<table class="data"><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table>`;
 
       container.querySelectorAll('th[data-key]').forEach((th) => {

@@ -5,6 +5,12 @@ const { NotFoundError } = require('../utils/errors');
 const COLS = [
   'container_number', 'container_type_id', 'seal_number', 'vessel', 'voyage',
   'status', 'pickup_location', 'pickup_date', 'delivery_date',
+  // A6 — transporter details (all optional)
+  'transporter', 'pickup_terminal', 'delivery_location', 'transporter_contact',
+  'pickup_contact_person', 'delivery_contact_person', 'pickup_instructions',
+  'delivery_instructions',
+  // Addendum optional
+  'demurrage_notes',
 ];
 
 function listByJob(jobId) {

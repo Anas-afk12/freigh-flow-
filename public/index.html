@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FreightFlow PRO — Dashboard</title>
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚢</text></svg>" />
 </head>
 <body>
   <div class="topbar">
@@ -13,8 +14,11 @@
       <a href="index.html" class="active">Dashboard</a>
       <a href="new-job.html">New Job</a>
       <a href="master-data.html">Master Data</a>
+      <a href="rate-sheet.html">Rate Sheet</a>
+      <a href="import.html">Import</a>
       <a href="reports-gpsht.html">GPSHT</a>
       <a href="reports-jobgp.html">JOBGP</a>
+      <a href="reports-payables.html">AP Aging</a>
       <a href="settings.html">Settings</a>
     </nav>
   </div>
@@ -37,9 +41,8 @@
             <option>BOOKED</option><option>SAILED</option><option>DELIVERED</option>
             <option>CLOSED</option><option>CANCELLED</option>
           </select>
-          <label style="display:flex;align-items:center;gap:6px;margin:0;">
-            <input type="checkbox" id="archived" style="width:auto;" /> Include archived
-          </label>
+          <select id="line"><option value="">All lines</option></select>
+          <label class="check"><input type="checkbox" id="archived" /><span>Include archived</span></label>
           <span class="spacer"></span>
         </div>
         <div id="jobs-table"></div>

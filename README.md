@@ -39,6 +39,15 @@ The company duplicated the same data (clients, containers, rates) across many sp
 - **One-click PDF documents** — Bill of Lading, Invoice, Booking Note, CRO Request — with a company letterhead and atomic per-year document numbering (`BL-2026-001`, `INV-2026-001`, …).
 - **Reports** — GPSHT (shipment tracking, one row per container) and JOBGP (profit/tax analysis, one row per job), each with filters, sorting, print, and **Excel export**.
 - **Atomic, gap-free job numbers** — `EUMEX-2026-001` via a dedicated sequence table (no `MAX()+1` race).
+- **Master Rate Sheet + auto-fill** — standing buying/selling rates per destination + container type auto-fill the new-job form (always editable, silently skipped when no match); local charges per container size; shipping lines master.
+- **CSV import** — additive Excel on-ramp for clients, ports, commodities, container types, shipping lines, master rates and local charges, with preview + adjustable column mapping; duplicates skipped, never overwritten.
+- **BL tracking** — received/forwarded dates with derived status on dashboard, job detail and GPSHT (internal only, never printed).
+- **Rebates & commissions** — client/line rebates and agent commissions per job; JOBGP shows adjusted profit (gross − client rebates + line rebates − commissions, all via the locked rate).
+- **Job cloning** — "Duplicate Job" copies parties, route and all rates to a fresh BOOKED job with a new number.
+- **LC details** (printed on the invoice only when set), **transporter details** per container (printed on the CRO), CBM for LCL, House BL, and optional customs/insurance/VGM fields.
+- **AP aging report** — unpaid vendor charges with days outstanding (+ Excel export).
+- **Money stored as integer cents/paisa** — no float drift in any financial record; conversion happens once per currency conversion.
+- **Tracked schema migrations** — the database upgrades in place (`npm run db:migrate` or automatically at boot); existing rows are never touched.
 - **Rotating local backups** — keeps the last 30 copies of the database file.
 - **Packaged as a Windows desktop app** via Electron (optional; the app also runs as a plain local web app).
 
@@ -63,6 +72,12 @@ Requires **Node.js 18+** (Node 22+ recommended).
 # 1. Install dependencies
 npm install
 # (to run/test only, without the Electron toolchain: npm install --omit=dev)
+#
+# On Node 24+ (no better-sqlite3 prebuilt binary) or a machine without Python /
+# build tools, skip native compilation — the app falls back to Node's built-in
+# SQLite automatically:
+#   npm install --omit=dev --ignore-scripts
+# Windows users can instead just double-click start-freightflow.bat.
 
 # 2. Create the database, schema and seed data (idempotent)
 npm run db:reset

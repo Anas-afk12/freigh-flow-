@@ -7,6 +7,18 @@ const reportsRepo = require('../repositories/reportsRepo');
 const taxesRepo = require('../repositories/taxesRepo');
 const profitService = require('../services/profitService');
 const { round2 } = require('../utils/numbers');
+const { fromCents } = require('../utils/money');
+
+const PAYABLES_COLUMNS = [
+  { key: 'vendor', header: 'Vendor' },
+  { key: 'job_number', header: 'Job Number' },
+  { key: 'charge_type', header: 'Charge' },
+  { key: 'amount', header: 'Amount' },
+  { key: 'currency', header: 'Currency' },
+  { key: 'invoice_number', header: 'Invoice #' },
+  { key: 'incurred_date', header: 'Incurred' },
+  { key: 'days_outstanding', header: 'Days Outstanding' },
+];
 
 const GPSHT_COLUMNS = [
   { key: 'job_number', header: 'Job Number' },
@@ -18,6 +30,7 @@ const GPSHT_COLUMNS = [
   { key: 'eta', header: 'ETA' },
   { key: 'status', header: 'Status' },
   { key: 'bl_number', header: 'BL Number' },
+  { key: 'bl_status', header: 'BL Status' },
   { key: 'pod', header: 'POD' },
 ];
 
@@ -27,6 +40,10 @@ const JOBGP_COLUMNS = [
   { key: 'freight_received', header: 'Freight Received (USD)' },
   { key: 'freight_paid', header: 'Freight Paid (USD)' },
   { key: 'profit_usd', header: 'Profit (USD)' },
+  { key: 'client_rebates', header: 'Client Rebates (USD)' },
+  { key: 'line_rebates', header: 'Line Rebates (USD)' },
+  { key: 'agent_commissions', header: 'Agent Comm. (USD)' },
+  { key: 'adjusted_profit_usd', header: 'Adjusted Profit (USD)' },
   { key: 'profit_pkr', header: 'Profit (PKR)' },
   { key: 'zkt', header: 'ZKT' },
   { key: 'khrt', header: 'KHRT' },
@@ -54,15 +71,22 @@ function buildGpsht(q) {
 function buildJobgp(q) {
   const base = reportsRepo.jobgpBase(filtersFromQuery(q));
   return base.map((job) => {
-    const profit = profitService.calculateProfit(job.id, { persist: false });
+    // Adjusted profit (A2): Gross − client rebates + line rebates − agent
+    // commissions. Net GP = Adjusted (PKR) − ZKT − KHRT. With no rebate rows
+    // this is byte-identical to the pre-A2 report.
+    const profit = profitService.calculateAdjustedProfit(job.id, { persist: false });
     const taxSums = taxesRepo.sumsByJob(job.id);
-    const netGp = round2(profit.profit_pkr - taxSums.ZKT - taxSums.KHRT);
+    const netGp = round2(profit.adjusted_profit_pkr - taxSums.ZKT - taxSums.KHRT);
     return {
       job_number: job.job_number,
       shipper: job.shipper,
       freight_received: profit.total_selling,
       freight_paid: profit.total_buying,
       profit_usd: profit.profit_usd,
+      client_rebates: profit.client_rebates,
+      line_rebates: profit.line_rebates,
+      agent_commissions: profit.agent_commissions,
+      adjusted_profit_usd: profit.adjusted_profit_usd,
       profit_pkr: profit.profit_pkr,
       zkt: round2(taxSums.ZKT),
       khrt: round2(taxSums.KHRT),
@@ -81,7 +105,15 @@ function toWorkbookBuffer(rows, columns, sheetName) {
   return XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
 }
 
+function buildPayables() {
+  return reportsRepo.payablesAging().map((r) => ({ ...r, amount: fromCents(r.amount) }));
+}
+
 const gpsht = asyncHandler(async (req, res) => ok(res, { columns: GPSHT_COLUMNS, rows: buildGpsht(req.query) }));
+const payablesAging = asyncHandler(async (req, res) => ok(res, { columns: PAYABLES_COLUMNS, rows: buildPayables() }));
+const payablesExport = asyncHandler(async (req, res) => {
+  sendXlsx(res, toWorkbookBuffer(buildPayables(), PAYABLES_COLUMNS, 'Payables Aging'), 'payables-aging.xlsx');
+});
 const jobgp = asyncHandler(async (req, res) => ok(res, { columns: JOBGP_COLUMNS, rows: buildJobgp(req.query) }));
 
 const gpshtExport = asyncHandler(async (req, res) => {
@@ -100,4 +132,4 @@ function sendXlsx(res, buf, filename) {
   res.send(buf);
 }
 
-module.exports = { gpsht, jobgp, gpshtExport, jobgpExport };
+module.exports = { gpsht, jobgp, gpshtExport, jobgpExport, payablesAging, payablesExport };

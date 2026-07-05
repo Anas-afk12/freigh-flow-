@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FreightFlow PRO — JOBGP Report</title>
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚢</text></svg>" />
 </head>
 <body>
   <div class="topbar">
@@ -13,8 +14,11 @@
       <a href="index.html">Dashboard</a>
       <a href="new-job.html">New Job</a>
       <a href="master-data.html">Master Data</a>
+      <a href="rate-sheet.html">Rate Sheet</a>
+      <a href="import.html">Import</a>
       <a href="reports-gpsht.html">GPSHT</a>
       <a href="reports-jobgp.html" class="active">JOBGP</a>
+      <a href="reports-payables.html">AP Aging</a>
       <a href="settings.html">Settings</a>
     </nav>
   </div>
@@ -26,7 +30,7 @@
         <select id="status"><option value="">All statuses</option><option>BOOKED</option><option>SAILED</option><option>DELIVERED</option><option>CLOSED</option><option>CANCELLED</option></select>
         <label style="margin:0;">From <input type="date" id="dateFrom" /></label>
         <label style="margin:0;">to <input type="date" id="dateTo" /></label>
-        <label style="display:flex;align-items:center;gap:6px;margin:0;"><input type="checkbox" id="archived" style="width:auto;" /> Incl. archived</label>
+        <label class="check"><input type="checkbox" id="archived" /><span>Incl. archived</span></label>
         <span class="spacer"></span>
         <button class="btn btn-sm btn-ghost" onclick="window.print()">Print</button>
         <button class="btn btn-sm btn-accent" id="export">Export Excel</button>

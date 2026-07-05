@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FreightFlow PRO — CSV Import</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚢</text></svg>" />
+</head>
+<body>
+  <div class="topbar">
+    <span class="brand">FreightFlow&nbsp;PRO</span>
+    <nav>
+      <a href="index.html">Dashboard</a>
+      <a href="new-job.html">New Job</a>
+      <a href="master-data.html">Master Data</a>
+      <a href="rate-sheet.html">Rate Sheet</a>
+      <a href="import.html" class="active">Import</a>
+      <a href="reports-gpsht.html">GPSHT</a>
+      <a href="reports-jobgp.html">JOBGP</a>
+      <a href="reports-payables.html">AP Aging</a>
+      <a href="settings.html">Settings</a>
+    </nav>
+  </div>
+
+  <div class="container">
+    <div class="page-head"><h1>CSV Import</h1></div>
+
+    <div class="card"><h2>1. Choose target &amp; file</h2><div class="card-body">
+      <div class="grid grid-3">
+        <div class="field">
+          <label>Import into</label>
+          <select id="target">
+            <option value="clients">Clients</option>
+            <option value="ports">Ports</option>
+            <option value="commodities">Commodities</option>
+            <option value="container-types">Container Types</option>
+            <option value="shipping-lines">Shipping Lines</option>
+            <option value="master-rates">Master Rates</option>
+            <option value="local-charges">Local Charges</option>
+          </select>
+        </div>
+        <div class="field"><label>CSV file</label><input type="file" id="file" accept=".csv,text/csv" /></div>
+        <div class="field"><label>&nbsp;</label><button class="btn btn-primary" id="preview-btn">Preview</button></div>
+      </div>
+      <p class="muted" style="font-size:12px;">Import is additive only — duplicates (matched by natural key) are skipped and reported, never overwritten.</p>
+    </div></div>
+
+    <div class="card" id="mapping-card" style="display:none;"><h2>2. Column mapping</h2><div class="card-body">
+      <div id="mapping-rows" class="grid grid-3"></div>
+      <div id="preview-info" class="muted" style="margin:8px 0;"></div>
+      <div id="sample-table" style="overflow-x:auto;"></div>
+      <div class="btn-row" style="margin-top:12px;">
+        <button class="btn btn-accent" id="commit-btn">Import Now</button>
+      </div>
+    </div></div>
+
+    <div class="card" id="result-card" style="display:none;"><h2>3. Result</h2><div class="card-body" id="result-body"></div></div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/modal.js"></script>
+  <script src="js/table.js"></script>
+  <script src="js/pages/import.js"></script>
+</body>
+</html>
